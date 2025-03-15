@@ -42,7 +42,9 @@ class Client(ClientBase):
         sort=True, return_df=True, projection={'_id': 0}):
         # function body
         store = self.db[f'{dtype}_data']
-        if len(tickers) == 1:
+        if isinstance(tickers, str):
+            query = {'symbol': tickers}
+        elif len(tickers) == 1:
             query = {'symbol': tickers[0]}
         else:
             query = {'symbol':{"$in": tickers}}
@@ -64,11 +66,13 @@ class Client(ClientBase):
     def read2(
         self, tickers, source='PK',
         start_time=None, end_time=None,
-        sort=True, return_df=True, projection={'_id': 0}):
+        sort=True, return_df=True, projection={'_id': 0}, kind='um'):
         # function body
-        store = self.db['um']
+        store = self.db[kind]
         event = SRC_EVENT_MAP[source]
-        if len(tickers) == 1:
+        if isinstance(tickers, str):
+            query = {'e': event, 's': tickers}
+        elif len(tickers) == 1:
             query = {'e': event, 's': tickers[0]}
         else:
             query = {'e': event, 's':{"$in": tickers}}
